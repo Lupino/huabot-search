@@ -6,6 +6,7 @@ import (
 	"github.com/Lupino/go-periodic"
 	"github.com/blevesearch/bleve"
 	"github.com/blevesearch/bleve/document"
+	"github.com/blevesearch/bleve/search/query"
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
 	"github.com/mholt/binding"
@@ -144,12 +145,12 @@ func main() {
 			return
 		}
 
-		query, err := bleve.ParseQuery([]byte(q))
+		_query, err := query.ParseQuery([]byte(q))
 		if err != nil {
-			query = bleve.NewQueryStringQuery(q)
+			_query = bleve.NewQueryStringQuery(q)
 		}
 
-		searchRequest := bleve.NewSearchRequestOptions(query, size, from, false)
+		searchRequest := bleve.NewSearchRequestOptions(_query, size, from, false)
 		searchResult, err := docIndex.Search(searchRequest)
 		if err != nil {
 			log.Printf("bleve.Index.Search() failed(%s)", err)

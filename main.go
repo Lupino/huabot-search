@@ -55,9 +55,8 @@ func main() {
 
 	router.HandleFunc("/api/docs/", func(w http.ResponseWriter, req *http.Request) {
 		doc := new(Document)
-		errs := binding.Bind(req, doc)
-		if errs.Handle(w) {
-			return
+		if err := binding.Bind(req, doc); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 		if err := submitDoc(*doc); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)

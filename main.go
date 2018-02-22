@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"github.com/Lupino/go-periodic"
+	"github.com/Lupino/tokenizer"
 	"github.com/blevesearch/bleve"
 	"github.com/blevesearch/bleve/document"
 	"github.com/blevesearch/bleve/search/query"
@@ -33,16 +34,19 @@ var (
 	docIndex     bleve.Index
 	pclient      = periodic.NewClient()
 	pworker      = periodic.NewWorker(2)
+	segoAddr     string
 )
 
 func init() {
 	flag.StringVar(&host, "host", "localhost:3030", "The patent search server host.")
 	flag.StringVar(&root, "work_dir", ".", "The patent work dir.")
 	flag.StringVar(&periodicAddr, "periodic", "unix:///tmp/periodic.sock", "The periodic server address")
+	flag.StringVar(&segoAddr, "tokenizer", "localhost:3000", "tokenizer server host.")
 	flag.Parse()
 }
 
 func main() {
+	tokenizer.SegoTokenizerHost = segoAddr
 	pclient.Connect(periodicAddr)
 	pworker.Connect(periodicAddr)
 	pworker.AddFunc(funcName, indexDocHandle)

@@ -12,7 +12,7 @@ var (
 func submitDoc(doc Document) error {
 	var data, _ = json.Marshal(doc)
 	return pclient.SubmitJob(funcName, doc.ID,
-		map[string]string{"args": string(data)})
+		map[string]interface{}{"args": string(data)})
 }
 
 func indexDocHandle(job periodic.Job) {
